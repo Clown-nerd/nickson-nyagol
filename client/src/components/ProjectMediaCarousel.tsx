@@ -57,7 +57,7 @@ export default function ProjectMediaCarousel({ projectName, projectNumber }: Pro
         <p className="mono text-[9px] uppercase tracking-[0.13em] text-[#c6ff3f]">{profile.signal}</p>
       </div>
 
-      <Carousel opts={{ loop: true }} setApi={setApi} className="media-carousel-main" aria-label={`${projectName} project media`}>
+      <Carousel opts={{ loop: true, dragFree: false, skipSnaps: false, containScroll: "trimSnaps" }} setApi={setApi} className="media-carousel-main" aria-label={`${projectName} project media`}>
         <CarouselContent className="-ml-0">
           {mediaSlots.map((slot, index) => (
             <CarouselItem key={slot.kind} className="pl-0">
@@ -78,7 +78,7 @@ export default function ProjectMediaCarousel({ projectName, projectNumber }: Pro
       </Carousel>
 
       <div className="media-carousel-footer">
-        <p className="media-upload-note"><Upload size={13} /><span><b>{activeSlot.label}:</b> {activeSlot.detail}</span></p>
+        <p className="media-upload-note" aria-live="polite"><Upload size={13} /><span><b>{activeSlot.label}:</b> {activeSlot.detail}</span></p>
         <div className="media-controls">
           <button type="button" className="focus-ring media-arrow" onClick={() => api?.scrollPrev()} aria-label={`Show previous ${projectName} media placeholder`}><ChevronLeft size={16} /></button>
           <div className="media-dots" aria-label={`${projectName} media slides`}>

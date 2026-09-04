@@ -48,3 +48,24 @@
 ## Work navigation verification
 
 - [x] Interactively verify the mobile menu Work link and in-page Work anchor behavior at mobile and half-desktop widths, then record the result.
+
+## Independent-copy mobile refinement
+
+- [x] Refine the mobile layout for the hero, Work section, project cards, skills, and contact areas without introducing horizontal overflow.
+- [x] Verify and tune touch interaction for the Three.js hero artifact, including pointer/touch-safe behavior and graceful reduced-motion fallback.
+- [x] Verify media carousel swipe/touch interaction, controls, focus states, and slide indicators on mobile.
+- [x] Ensure scroll-triggered animations reveal all content reliably on mobile, including slow-scroll and reduced-motion behavior.
+- [x] Run mobile, tablet, accessibility, TypeScript, test, and production-build validation, then record findings.
+
+## Runtime verification follow-up
+
+- [x] Interactively test the Three.js hero artifact on a mobile-sized viewport for touch/scroll conflict, pointer-cancel reset, and reduced-motion fallback, then record results.
+- [x] Interactively test each media carousel on mobile for swipe gestures, previous/next buttons, slide dots, and visible focus states after the touch refinements, then record results.
+- [x] Validate scroll-reveal behavior on mobile with normal scrolling, slow scrolling, and prefers-reduced-motion enabled, then fix any remaining reveal regressions.
+- [x] Run and document tablet-width verification plus an accessibility audit/checklist for the updated mobile experience, then record findings and save a checkpoint.
+
+## Final runtime validation
+
+- [x] Interactively verify mobile scroll reveals by scrolling through the full page at normal and slow speeds, then repeat with reduced motion enabled and record results.
+- [x] Run an accessibility checklist for the updated mobile/tablet experience covering focus order, visible focus, control labels, contrast, and motion fallback; fix any issues found.
+- [x] Save a delivery-ready checkpoint after runtime validation is completed.

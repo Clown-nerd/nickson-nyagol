@@ -205,6 +205,14 @@ export default function Home() {
     }
 
     root.dataset.motion = "enhanced";
+    if (!("IntersectionObserver" in window)) {
+      revealTargets.forEach((target) => target.setAttribute("data-inview", "true"));
+      return () => {
+        window.removeEventListener("scroll", updateScrollProgress);
+        window.removeEventListener("resize", updateScrollProgress);
+      };
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -214,7 +222,7 @@ export default function Home() {
           }
         });
       },
-      { rootMargin: "0px 0px -8%", threshold: 0.1 },
+      { rootMargin: "0px 0px -12% 0px", threshold: 0 },
     );
     revealTargets.forEach((target) => observer.observe(target));
 
@@ -278,7 +286,7 @@ export default function Home() {
 
   const handlePlaceholderLink = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
-    window.alert("Add Marcus’s live project URL or repository URL before publishing this portfolio.");
+    window.alert("Add Nickson’s live project URL or repository URL before publishing this portfolio.");
   };
 
   return (
@@ -331,7 +339,7 @@ export default function Home() {
       </header>
 
       <main id="top" className="flow-log">
-        <section ref={heroSceneRef} className="hero-scene grid-grain relative border-b border-[#27312c]" onPointerMove={updateHeroDepth} onPointerLeave={resetHeroDepth}>
+          <section ref={heroSceneRef} className="hero-scene grid-grain relative border-b border-[#27312c]" onPointerMove={updateHeroDepth} onPointerLeave={resetHeroDepth} onPointerCancel={resetHeroDepth}>
           <span className="hero-plane hero-plane-one" aria-hidden="true" />
           <span className="hero-plane hero-plane-two" aria-hidden="true" />
           <div className="shell grid min-h-[690px] items-end gap-12 py-14 md:grid-cols-[1fr_0.78fr] md:py-20 lg:min-h-[720px]">
@@ -381,7 +389,7 @@ export default function Home() {
           <div className="case-log mt-8">
             <p className="log-cue mb-5">LOG/WORK · sector 02 · seven systems in the field</p>
             {projects.map((project, index) => (
-              <article key={project.number} className={`case-story project-tilt reveal ${project.number === "02" ? "case-featured" : ""}`} data-case={project.number} data-reveal data-inview="false" style={{ transitionDelay: `${index * 65}ms` }} onPointerMove={updateProjectTilt} onPointerLeave={resetProjectTilt}>
+              <article key={project.number} className={`case-story project-tilt reveal ${project.number === "02" ? "case-featured" : ""}`} data-case={project.number} data-reveal data-inview="false" style={{ transitionDelay: `${index * 65}ms` }} onPointerMove={updateProjectTilt} onPointerLeave={resetProjectTilt} onPointerCancel={resetProjectTilt}>
                 <div className="case-stamp"><span className="case-node" aria-hidden="true" /><p className="mono text-[11px] tracking-[0.14em] text-[#778279]">{project.number} /</p><p className="mono mt-5 text-[9px] uppercase tracking-[0.13em] text-[#7f8a82]">{project.type}</p></div>
                 <div className="case-title"><h3>{project.name}</h3><p className="case-kicker">A story of making work easier to move.</p><div className="mt-6 flex flex-wrap gap-2">{project.stack.map((item) => <span key={item} className="mono border border-[#354038] px-2.5 py-1 text-[9px] uppercase tracking-[0.08em] text-[#aeb7b0]">{item}</span>)}</div></div>
                 <div className="case-narrative"><div><p className="case-label">The friction</p><p>{project.problem}</p></div><div><p className="case-label">What I built</p><p>{project.build}</p></div><div><p className="case-label">What it advances</p><p>{project.impact}</p></div></div>

@@ -24,6 +24,8 @@ export default function HeroArtifact({ reducedMotion }: HeroArtifactProps) {
       let animationFrame = 0;
       let renderer: import("three").WebGLRenderer | undefined;
       let resizeObserver: ResizeObserver | undefined;
+      let visibilityObserver: IntersectionObserver | undefined;
+      let isVisible = true;
 
       try {
         const scene = new THREE.Scene();
@@ -79,13 +81,16 @@ export default function HeroArtifact({ reducedMotion }: HeroArtifactProps) {
 
         const pointer = { x: 0, y: 0 };
         const onPointerMove = (event: PointerEvent) => {
+          if (event.pointerType === "touch" || event.pointerType === "pen") return;
           const rect = mount.getBoundingClientRect();
-          pointer.x = (event.clientX - rect.left) / rect.width - 0.5;
-          pointer.y = (event.clientY - rect.top) / rect.height - 0.5;
+          if (!rect.width || !rect.height) return;
+          pointer.x = Math.max(-0.5, Math.min(0.5, (event.clientX - rect.left) / rect.width - 0.5));
+          pointer.y = Math.max(-0.5, Math.min(0.5, (event.clientY - rect.top) / rect.height - 0.5));
         };
         const onPointerLeave = () => { pointer.x = 0; pointer.y = 0; };
-        mount.addEventListener("pointermove", onPointerMove);
-        mount.addEventListener("pointerleave", onPointerLeave);
+        mount.addEventListener("pointermove", onPointerMove, { passive: true });
+        mount.addEventListener("pointerleave", onPointerLeave, { passive: true });
+        mount.addEventListener("pointercancel", onPointerLeave, { passive: true });
 
         const resize = () => {
           const bounds = mount.getBoundingClientRect();
@@ -97,6 +102,10 @@ export default function HeroArtifact({ reducedMotion }: HeroArtifactProps) {
         };
         resizeObserver = new ResizeObserver(resize);
         resizeObserver.observe(mount);
+        visibilityObserver = new IntersectionObserver(([entry]) => {
+          isVisible = Boolean(entry?.isIntersecting);
+        }, { rootMargin: "120px" });
+        visibilityObserver.observe(mount);
         window.addEventListener("resize", resize, { passive: true });
         resize();
         window.requestAnimationFrame(resize);
@@ -109,7 +118,7 @@ export default function HeroArtifact({ reducedMotion }: HeroArtifactProps) {
           marker.position.x = -0.4 + Math.sin(elapsed * 1.35) * 0.42;
           marker.rotation.set(elapsed * 1.7, elapsed * 1.1, 0);
           halo.rotation.z = elapsed * 0.08;
-          renderer?.render(scene, camera);
+          if (isVisible && !document.hidden) renderer?.render(scene, camera);
           animationFrame = window.requestAnimationFrame(render);
         };
 
@@ -122,7 +131,9 @@ export default function HeroArtifact({ reducedMotion }: HeroArtifactProps) {
           window.cancelAnimationFrame(animationFrame);
           mount.removeEventListener("pointermove", onPointerMove);
           mount.removeEventListener("pointerleave", onPointerLeave);
+          mount.removeEventListener("pointercancel", onPointerLeave);
           resizeObserver?.disconnect();
+          visibilityObserver?.disconnect();
           window.removeEventListener("resize", resize);
           scene.traverse((object) => {
             const renderable = object as import("three").Mesh;
@@ -147,7 +158,7 @@ export default function HeroArtifact({ reducedMotion }: HeroArtifactProps) {
 
   return (
     <div className={`webgl-artifact ${webglActive ? "is-webgl-active" : ""}`} aria-label="Interactive three-dimensional system artifact">
-      <img src="/manus-storage/marcus-hero-terminal_7afb372a.jpg" alt="Abstract graphite software architecture sculpture" className="webgl-fallback" />
+      <img src="/manus-storage/marcus-hero-terminal_7afb372a.jpg" alt="" aria-hidden="true" className="webgl-fallback" onError={(event) => { event.currentTarget.style.display = "none"; }} />
       <div ref={mountRef} className="webgl-canvas" aria-hidden="true" />
       <div className="artifact-status" aria-hidden="true">
         <p>WebGL / {webglActive ? "interactive" : "static artifact"}</p>
